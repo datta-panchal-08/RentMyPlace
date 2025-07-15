@@ -1,5 +1,5 @@
 import axios from 'axios';
-const baseUrl = "http://localhost:3200/api/v1";
+const baseUrl = "https://rentmyplace-backend.onrender.com";
 
 const instance = axios.create({
     baseURL:baseUrl,
