@@ -1,15 +1,17 @@
 import { MdOutlineVerifiedUser } from "react-icons/md";
+import { useSelector } from "react-redux";
 
 const ListingCard = ({listing}) => {
+    const {popup} = useSelector(state=>state.auth);
     const categories = ["Shop","Cabins","Pg","Flat"];
   return (
     <div className='w-full h-[100%] rounded-xl overflow-hidden flex flex-col card-shadow'>
         <div className="img-container w-full relative h-[60%] overflow-hidden ">
               <img className='w-full h-full object-cover' src={listing?.image1} alt={listing?.title} />
               {
-                listing.isBooked ? <div className="status absolute z-50 top-1 right-1 py-1 px-2 rounded-md bg-slate-100">
+                listing.isBooked ? <div className={`status absolute top-1 right-1 py-1 px-2 rounded-md bg-slate-100 ${!popup ? "z-50" : ""}`}>
                 <h3 className='text-green-700 text-xs font-semibold flex items-center'>Booked<MdOutlineVerifiedUser className="text-sm"/></h3>
-              </div>:<div className="status absolute z-50 top-1 left-1 py-1 px-2 rounded-md bg-slate-50">
+              </div>:<div className={`status absolute top-1 left-1 py-1 px-2 rounded-md bg-slate-100 ${!popup ? "z-50" : ""}`}>
                 <h3 className='text-green-700 text-xs font-semibold'>Available</h3>
               </div>
               }

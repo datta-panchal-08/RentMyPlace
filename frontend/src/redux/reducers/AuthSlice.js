@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    user:null
+    user:null,
+    popup:false
 }
 
 const AuthSlice = createSlice({
@@ -11,11 +12,14 @@ const AuthSlice = createSlice({
         setUser:(state,action)=>{
             state.user = action.payload;
         },
+        isPopupVisible:(state)=>{
+            state.popup = !state.popup;
+        },
         removeUser:(state,action)=>{
             state.user = null;
         }
     }
 });
 
-export const {setUser,removeUser} = AuthSlice.actions;
+export const {setUser,removeUser,isPopupVisible} = AuthSlice.actions;
 export default AuthSlice.reducer;

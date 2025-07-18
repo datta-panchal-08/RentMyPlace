@@ -19,19 +19,22 @@ import { GiWoodCabin } from "react-icons/gi";
 import { useDispatch, useSelector } from 'react-redux';
 import { post } from '../api/Endpoint';
 import { toast } from 'react-toastify';
-import { removeUser } from '../redux/reducers/AuthSlice';
+import { isPopupVisible, removeUser } from '../redux/reducers/AuthSlice';
 import { Link } from 'react-router-dom';
 import { clearListings, setIsListingUpdated, setListing, setListingCategory } from '../redux/reducers/ListingSlice';
 import { findPlaceBycategory } from '../redux/actions/ListingActions';
 
 
 const Nav = () => {
-  const [popup, setPopup] = useState(false);
-  const {user} = useSelector(state=>state.auth);
+  const {user,popup} = useSelector(state=>state.auth);
   const dispatch = useDispatch();
   const listingCategory = useSelector((state) => state.listing.listingCategory);
   const {listings} = useSelector((state) => state.listing);
-  const initalListings = listings;
+
+  const setPopup = ()=>{
+    dispatch(isPopupVisible());
+  }
+  
   const setCategory = (cat)=>{
     dispatch(setListingCategory(cat));
   }
