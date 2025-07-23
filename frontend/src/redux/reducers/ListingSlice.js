@@ -7,7 +7,7 @@ const initialState = {
 }
 
 const Listingslice = createSlice({
-    name: "auth",
+    name: "listing",
     initialState,
     reducers: {
         setListing: (state, action) => {
@@ -20,13 +20,15 @@ const Listingslice = createSlice({
         setListingCategory:(state,action)=>{
             state.listingCategory = action.payload;
         },
-        clearListings: (state) => {
-            state.listings = [];
-            state.isListUpdated = false; 
-        }
+       removeListingCategory:(state)=>{
+          state.listingCategory = null;
+       },
+       clearListings:(state)=>{
+        state.listings = null;
+       } 
 
     }
 });
 
-export const { setListing ,setIsListingUpdated ,setListingCategory ,clearListings  } = Listingslice.actions;
+export const { setListing,clearListings ,setIsListingUpdated ,setListingCategory ,removeListingCategory  } = Listingslice.actions;
 export default Listingslice.reducer;

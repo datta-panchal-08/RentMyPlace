@@ -21,13 +21,9 @@ const listingSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    isBooked: {
-        type: Boolean,
-        default: false
-    },
-    rentTime: {
-        type: Date,
-        default: null 
+    isBooked:{
+        type:Boolean,
+        default:false
     },
     category: {
         type: String,
@@ -35,6 +31,10 @@ const listingSchema = new mongoose.Schema({
     },
     location:{
         type:String,
+        required:true
+    },
+    price:{
+        type:Number,
         required:true
     },
     userId: {
