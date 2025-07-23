@@ -25,7 +25,7 @@ import { clearListings, setIsListingUpdated, setListing, setListingCategory } fr
 import { findPlaceBycategory } from '../redux/actions/ListingActions';
 import { IoPartlySunny } from "react-icons/io5";
 import { FaCloudMoon } from "react-icons/fa6";
-
+import { persist } from '../redux/store'; 
 
 const Nav = () => {
   const { user, popup, isDarkMode } = useSelector(state => state.auth);
@@ -75,7 +75,8 @@ const Nav = () => {
         dispatch(removeUser());
         dispatch(clearListings());
         dispatch(setIsListingUpdated());
-        // navigate('/login');
+        persist.purge();
+        navigate('/login');
       }
     } catch (error) {
       toast.error(error?.response?.data?.message);
