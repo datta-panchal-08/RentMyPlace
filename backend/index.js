@@ -11,8 +11,8 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const corsOptions ={
-    // origin:"https://rentmyplace-frontend.onrender.com",
-    origin:"http://localhost:5173",
+    origin:"https://rentmyplace-frontend.onrender.com",
+    // origin:"http://localhost:5173",
     credentials:true
 }
 
