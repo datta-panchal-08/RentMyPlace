@@ -72,7 +72,7 @@ const CreateListing = () => {
                 <option disabled>Select Category</option>
                 {
                   categories.map((category, i) => {
-                    return <option className='w-full' value={category}>{category}</option>
+                    return <option key={i} className='w-full' value={category}>{category}</option>
                   })
                 }
               </select>
