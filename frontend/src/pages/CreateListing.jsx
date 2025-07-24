@@ -5,7 +5,7 @@ import { MdOutlineFileUpload } from "react-icons/md";
 import { get, patch, post } from '../api/Endpoint';
 import { useDispatch } from 'react-redux';
 import { setIsListingUpdated } from '../redux/reducers/ListingSlice';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 const CreateListing = () => {
   document.title = "List";
   const [title, setTitle] = useState("");
@@ -17,6 +17,7 @@ const CreateListing = () => {
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const categories = ['Rooms', "Trending", "Villa", "Farm House", "Pool House", "Flat", "Pg", "Cabins", "Shop"];
   const { id } = useParams();
@@ -85,7 +86,7 @@ const CreateListing = () => {
       dispatch(setIsListingUpdated(true));
       resetForm();
     }
-
+   navigate("/")
   } catch (error) {
     const errorMsg = error?.response?.data?.message || "Something went wrong!";
     toast.error(errorMsg);
