@@ -11,13 +11,14 @@ export const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
     document.title = "Login";
     const navigate = useNavigate();
 
     const loginHandler = async (e) => {
+        e.preventDefault();
+        setLoading(true)
         try {
-            e.preventDefault();
-
             const res = await post("/auth/login", {
                 email,
                 password
@@ -30,8 +31,10 @@ export const Login = () => {
                 setPassword("");
                 navigate("/");
             }
+            setLoading(false);
         } catch (error) {
             toast.error(error?.response?.data?.message);
+            setLoading(false);
         }
     }
 
@@ -96,10 +99,13 @@ export const Login = () => {
 
                         <button
                             type="submit"
-                            className="bg-orange-500 text-white py-2 px-4 rounded-md hover:bg-orange-600 transition"
+                            className={`bg-orange-500 text-white py-2 px-4 rounded-md transition ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-orange-600"
+                                }`}
+                            disabled={loading}
                         >
-                            Sign In
+                            {loading ? "Signing In..." : "Sign In"}
                         </button>
+
                         <p className="text-center">
                             don't have an account ? <Link to='/signup' className="underline text-sky-500 font-semibold">Signup</Link>
                         </p>

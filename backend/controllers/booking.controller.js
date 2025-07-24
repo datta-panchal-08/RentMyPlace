@@ -4,7 +4,8 @@ import { User } from '../models/user.model.js';
 
 export const createBooking = async (req, res) => {
   try {
-    const { listingId, startDate, endDate, price, methodType, title } = req.body;
+    const {startDate,finalPrice, endDate, methodType } = req.body;
+    const listingId= req.params.id;    
     const userId = req.user.id;
 
     // Step 1: Find the listing
@@ -16,6 +17,13 @@ export const createBooking = async (req, res) => {
       });
     }
 
+    if(listing.isBooked === true){
+      return res.status(400).json({
+        message:"Already Booked!",
+        success:false
+      })
+    }
+
     // Step 2: Prevent self-booking
     if (listing.userId.toString() === userId.toString()) {
       return res.status(403).json({
@@ -23,33 +31,18 @@ export const createBooking = async (req, res) => {
         success: false,
       });
     }
-
-    // Step 3: Price calculation based on method
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    let finalPrice = 0;
-
-    if (methodType === "perMonth") {
-      const months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth()) + 1;
-      finalPrice = months * price;
-    } else if (methodType === "perDay") {
-      const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
-      finalPrice = days * price;
-    }
-
-    // Step 4: Save booking
     const newBooking = new Booking({
       userId,
       listingId,
-      title,
       startDate,
       endDate,
       finalPrice,
+      methodType
     });
 
     await newBooking.save();
-
     await User.findByIdAndUpdate(userId, { $push: { booking: newBooking._id } }, { new: true });
+    await Listing.findByIdAndUpdate(listingId,{isBooked:true},{new:true});
 
     res.status(201).json({
       message: "Booking successful!",
@@ -68,37 +61,64 @@ export const createBooking = async (req, res) => {
 
 export const deleteBooking = async (req, res) => {
   try {
-    const { id } = req.params;
-    const userId = req.user.id;
+    const { id } = req.params; 
+    const userId = req.user?.id;
 
+    // Step 1: Validate
     if (!userId || !id) {
       return res.status(400).json({
-        message: "Error, No listingId and BookedBy provided!",
+        message: "❌ Missing booking ID or user ID!",
         success: false,
       });
     }
 
-    // Remove booking from user
-    await User.findByIdAndUpdate(
-      userId,
-      { $pull: { booking: { _id: id } } },
+    // Step 2: Find booking
+    const booking = await Booking.findById(id);
+    if (!booking) {
+      return res.status(404).json({
+        message: "❌ Booking not found!",
+        success: false,
+      });
+    }
+
+    // Step 3: Check if the booking belongs to the user
+    if (booking.bookedBy.toString() !== userId.toString()) {
+      return res.status(403).json({
+        message: "❌ Not authorized to delete this booking!",
+        success: false,
+      });
+    }
+
+    // Step 4: Update the listing to set isBooked = false
+    await Listing.findByIdAndUpdate(
+      booking.listingId,
+      { isBooked: false },
       { new: true }
     );
 
-    // Delete the booking document
+    // Step 5: Remove booking reference from user
+    await User.findByIdAndUpdate(
+      userId,
+      { $pull: { booking: id } }, 
+      { new: true }
+    );
+
+    // Step 6: Delete the booking document
     await Booking.findByIdAndDelete(id);
 
+    // Step 7: Respond to client
     res.status(200).json({
-      message: "Booking Cancelled!",
+      message: "✅ Booking cancelled successfully!",
       success: true,
     });
 
   } catch (error) {
-    console.log("Error:", error);
+    console.error("❌ Delete Booking Error:", error);
     res.status(500).json({
-      message: "Internal server error while deleting booking.",
+      message: "❌ Internal server error while deleting booking.",
       success: false,
       error: error.message,
     });
   }
 };
+

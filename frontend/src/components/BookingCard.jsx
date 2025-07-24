@@ -30,7 +30,7 @@ const BookingCard = ({ booking, setUpdate }) => {
       <Link to={`/place/${booking?.listingId?._id}`} className="aspect-[4/3] w-full relative overflow-hidden">
         <img
           className='w-full h-full object-cover'
-          src={booking?.listingId?.image1}
+          src={booking?.listingId?.image1?.url}
           alt={booking?.listingId?.title}
         />
         {booking?.listingId?.isBooked ? (
@@ -75,9 +75,6 @@ const BookingCard = ({ booking, setUpdate }) => {
 
       {user?._id === booking?.userId && (
         <div className="flex justify-between px-2 py-2">
-          <button className="px-4 py-1 font-semibold bg-yellow-500 text-white rounded-md">
-            <FiEdit />
-          </button>
           <button onClick={deleteHandler} className="px-4 py-1 font-semibold bg-red-500 text-white rounded-md">
             <TbCancel />
           </button>

@@ -35,7 +35,7 @@ const Nav = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [searchTxt, setSearchTxt] = useState("");
-  const paths = ['/bookings', '/listings', '/place', '/add-place'];
+  const paths = ['/bookings', '/listings', '/place', '/add-place','/update/place'];
 
   const setPopup = () => {
     dispatch(isPopupVisible());
@@ -85,7 +85,7 @@ const Nav = () => {
 
   const getListingByCategory = () => {
     if (listingCategory === "All") {
-      dispatch(setIsListingUpdated());
+      dispatch(setIsListingUpdated(true));
     } else {
       dispatch(findPlaceBycategory(listingCategory));
     }
@@ -167,7 +167,10 @@ const Nav = () => {
             popup && <div className="menu text-zinc-800 absolute top-[110%] right-[1%] md:right-[1%] border-1 border-gray-200 rounded-md w-[200px] h-[200px] bg-slate-50 z-50">
               <ul className='flex flex-col gap-5 py-2'>
                 {
-                  user ? <li onClick={handleLogout} className='flex cursor-pointer items-center ml-2 '>Logout</li> : <Link to={'/login'} className='flex items-center ml-2 cursor-pointer'>Login</Link>
+                  user ? <li onClick={handleLogout} className='flex cursor-pointer items-center ml-2 '>Logout</li> : <button onClick={()=>{
+                    navigate("/login");
+                    dispatch(removeUser());
+                  }} className='flex items-center ml-2 cursor-pointer'>Login</button>
                 }
                 <hr />
                 <Link to={"/add-place"} className='flex items-center ml-2 '><MdHomeWork />List Your Home</Link>

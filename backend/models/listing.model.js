@@ -10,32 +10,32 @@ const listingSchema = new mongoose.Schema({
         required: true
     },
     image1: {
-        type: String,
-        required: true
+        url: { type: String, required: true },
+        public_id: { type: String, required: true }
     },
     image2: {
-        type: String,
-        required: true
+        url: { type: String, required: true },
+        public_id: { type: String, required: true }
     },
     image3: {
-        type: String,
-        required: true
+        url: { type: String, required: true },
+        public_id: { type: String, required: true }
     },
-    isBooked:{
-        type:Boolean,
-        default:false
+    isBooked: {
+        type: Boolean,
+        default: false
     },
     category: {
         type: String,
         required: true
     },
-    location:{
-        type:String,
-        required:true
+    location: {
+        type: String,
+        required: true
     },
-    price:{
-        type:Number,
-        required:true
+    price: {
+        type: Number,
+        required: true
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,

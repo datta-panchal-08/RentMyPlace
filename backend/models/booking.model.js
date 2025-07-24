@@ -11,10 +11,6 @@ const bookingSchema = new mongoose.Schema({
     ref:"Listing",
     required:true
   },
-  title: {
-    type: String,
-    trim: true
-  },
   startDate: {
     type: Date,
     required: true

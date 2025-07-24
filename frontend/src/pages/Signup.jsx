@@ -9,12 +9,14 @@ export const Signup = () => {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loading,setLoading] = useState(false);
     const navigate = useNavigate();
     document.title = "Signup";
 
     const signupHandler = async (e) => {
+        e.preventDefault();
+        setLoading(true);
         try {
-            e.preventDefault();
             const res = await post("/auth/signup", {
                 username,
                 email,
@@ -29,9 +31,10 @@ export const Signup = () => {
                 setPassword("");
                 navigate("/login");
             }
-
+            setLoading(false);
         } catch (error) {
             toast.error(error?.response?.data?.message || "Signup failed");
+            setLoading(false);
         }
     }
 
@@ -103,9 +106,11 @@ export const Signup = () => {
 
                         <button
                             type="submit"
-                            className="bg-orange-500 text-white py-2 px-4 rounded-md hover:bg-orange-600 transition"
+                            disabled={loading}
+                            className={`bg-orange-500 text-white py-2 px-4 rounded-md transition ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-orange-600"
+                                }`}
                         >
-                            Sign Up
+                        {loading ? "Signing Up..." : "Sign Up"}
                         </button>
 
                         <p className="text-center">already have an account ? <Link to='/login' className="text-sky-500 underline font-semibold">Signin</Link></p>

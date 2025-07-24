@@ -1,5 +1,4 @@
-import AllListings from "../components/AllListings"
-
+import AllListings from '../components/AllListings'
 const Home = () => {
   document.title = "Home"
   return (

@@ -9,6 +9,7 @@ const MyListings = () => {
   const [userListings, setUserListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [update,setUpdate] = useState(false);
+  
   const getUserListings = async () => {
     try {
       const res = await get("/user/listings");
@@ -28,11 +29,10 @@ const MyListings = () => {
   };
 
 
-  useEffect(() => {
-    if(update === true || userListings?.length === 0){
-          getUserListings();
-    }
-  }, [update,userListings.length])
+useEffect(() => {
+  getUserListings();
+}, [update]);
+
 
   return loading ? <Spinner /> : (
     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 px-5 gap-5 py-4 overflow-hidden'>

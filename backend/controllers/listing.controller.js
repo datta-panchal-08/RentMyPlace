@@ -2,17 +2,17 @@ import { Listing } from '../models/listing.model.js';
 import mongoose from 'mongoose';
 import { User } from '../models/user.model.js';
 import { Booking } from '../models/booking.model.js';
-import uploadToCloudinary from '../config/cloudinary.js';
+import uploadToCloudinary, { deleteFromCloudinary } from '../config/cloudinary.js';
 
 export const createListing = async (req, res) => {
   try {
-    const { title,description, location, isBooked, price, category } = req.body;
+    const { title, description, location, price, category } = req.body;
     const userId = req.user.id;
     const image1 = await uploadToCloudinary(req.files.image1[0].path);
     const image2 = await uploadToCloudinary(req.files.image2[0].path);
     const image3 = await uploadToCloudinary(req.files.image3[0].path);
 
-      if (
+    if (
       !title ||
       !image1 ||
       !image2 ||
@@ -32,16 +32,25 @@ export const createListing = async (req, res) => {
 
     const newListing = await Listing.create(
       {
-        title, image1, image2, image3, price, description, location, isBooked, category, userId: userId
+        title, image1: {
+          url: image1.secure_url,
+          public_id: image1.public_id
+        }, image2: {
+          url: image2.secure_url,
+          public_id: image2.public_id
+        }, image3: {
+          url: image3.secure_url,
+          public_id: image3.public_id
+        }, price, description, location, category, userId: userId
       }
     );
     await newListing.save();
     await User.findByIdAndUpdate(userId, { $push: { listing: newListing._id } }, { new: true }).exec();
     res.status(201).json({
-      message: "Place added!",
+      message: "Listing Created!",
       success: true,
       newListing
-    })
+    });
 
   } catch (error) {
     console.log("Create Listing Error : ", error);
@@ -51,6 +60,7 @@ export const createListing = async (req, res) => {
     })
   }
 }
+
 
 export const getListingByCategory = async (req, res) => {
   try {
@@ -176,7 +186,7 @@ export const deletePlace = async (req, res) => {
     await Booking.deleteMany({ listingId: id });
 
     res.status(200).json({
-      message: "Place and associated bookings deleted successfully!",
+      message: "Listing Deleted!",
       success: true
     });
 
@@ -189,3 +199,67 @@ export const deletePlace = async (req, res) => {
     });
   }
 };
+
+export const updateListing = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, location, price, category } = req.body;
+
+    const findListing = await Listing.findById(id);
+
+    if (!findListing) {
+      return res.status(404).json({
+        message: "No Listing Found!",
+        success: false
+      })
+    }
+
+    const oldImage1 = findListing.image1.public_id && findListing.image1.public_id;
+    const oldImage2 = findListing.image2.public_id && findListing.image2.public_id;
+    const oldImage3 = findListing.image3.public_id && findListing.image3.public_id;
+
+    const newImg1 = req.files?.image1 ? await uploadToCloudinary(req.files.image1[0].path) : null;
+    const newImg2 = req.files?.image2 ? await uploadToCloudinary(req.files.image2[0].path) : null;
+    const newImg3 = req.files?.image3 ? await uploadToCloudinary(req.files.image3[0].path) : null;
+
+
+    if (newImg1) {
+      await deleteFromCloudinary(oldImage1);
+    }
+    if (newImg2) {
+      await deleteFromCloudinary(oldImage2);
+    }
+    if (newImg3) {
+      await deleteFromCloudinary(oldImage3);
+    }
+
+    const updatedListing = await Listing.findByIdAndUpdate(id, {
+      title, location, category, price, description,
+    image1: newImg1 
+  ? { url: newImg1.secure_url, public_id: newImg1.public_id } 
+  : findListing.image1,
+
+      image2: newImg2
+        ? { url: newImg2.secure_url, public_id: newImg2.public_id }
+        : findListing.image2,
+
+      image3: newImg3
+        ? { url: newImg3.secure_url, public_id: newImg3.public_id }
+        : findListing.image3,
+
+    }, { new: true })
+
+    res.status(200).json({
+      message: "Listing Updated!",
+      success: true
+    })
+
+  } catch (error) {
+    console.error("Error updating listing:", error);
+    res.status(500).json({
+      message: "Something went wrong while update place.",
+      success: false,
+      error: error.message
+    })
+  }
+}

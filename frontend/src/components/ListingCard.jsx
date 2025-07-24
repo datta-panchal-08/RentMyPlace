@@ -1,22 +1,24 @@
 import { MdOutlineVerifiedUser } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { FiEdit } from "react-icons/fi";
 import { BsTrash2Fill } from "react-icons/bs";
 import { FaLocationDot } from "react-icons/fa6";
 import { del } from "../api/Endpoint";
-import {toast} from 'react-toastify';
-const ListingCard = ({ listing, isCreator,setUpdate,path }) => {
+import { toast } from 'react-toastify';
+import { setIsListingUpdated } from "../redux/reducers/ListingSlice";
+const ListingCard = ({ listing, isCreator, setUpdate }) => {
   const { popup } = useSelector(state => state.auth);
   const categories = ["Shop", "Cabins", "Pg", "Flat"];
   const { user } = useSelector(state => state.auth);
-  
-  const deleteHandler = async()=>{
+  const dispatch = useDispatch();
+  const deleteHandler = async () => {
     try {
-      const res = await del(`/user/listing/:${listing?._id}`);
-      if(res.status === 200){
+      const res = await del(`/listing/delete/${listing?._id}`);
+      if (res.status === 200) {
         toast.success(res?.data?.message);
-        setUpdate(true)
+        setUpdate(prev => !prev);
+        dispatch(setIsListingUpdated(true));
       }
     } catch (error) {
       const errMsg = error?.response?.data?.message;
@@ -25,10 +27,10 @@ const ListingCard = ({ listing, isCreator,setUpdate,path }) => {
   }
 
   return (
-    <div className='w-full h-[350px] transition-all ease-in duration-300 hover:scale-105 rounded-xl overflow-hidden flex flex-col card-shadow'>
+    <div className='w-full h-[350px] rounded-xl overflow-hidden flex flex-col card-shadow'>
 
       <Link to={`/place/${listing._id}`} className="aspect-[4/3] w-full relative overflow-hidden">
-        <img className='w-full h-full object-cover' src={listing?.image1} alt={listing?.title} />
+        <img className='w-full h-full object-cover' src={listing?.image1?.url} alt={listing?.title} />
         {listing.isBooked ? (
           <div
             className={`absolute top-1 right-1 py-1 px-2 rounded-md bg-slate-100 ${!popup ? "z-50" : ""
@@ -58,16 +60,16 @@ const ListingCard = ({ listing, isCreator,setUpdate,path }) => {
             categories?.includes(listing?.category) ? <span className='text-red-400 text-sm font-semibold'>₹{listing?.price}/month</span> : <span className='text-red-400 text-sm font-semibold'>₹{listing?.price}/night</span>
           }
           <span className='text-xs font-semibold flex items-center gap-1 bg-gray-200 capitalize text-blue-600 rounded-full px-2 py-1 '>
-            <FaLocationDot className="text-red-500"/>{listing?.location}</span>
+            <FaLocationDot className="text-red-500" />{listing?.location}</span>
         </div>
       </div>
 
       {isCreator && user?._id === listing?.userId && (
         <div className="flex justify-between px-2 py-2">
-          <button className="px-4 py-1 font-semibold bg-yellow-500 text-white rounded-md">
+          <Link to={`/update/place/${listing?._id}`} className="px-4 py-1 font-semibold cursor-pointer bg-yellow-500 text-white rounded-md">
             <FiEdit />
-          </button>
-          <button className="px-4 py-1 font-semibold bg-red-500 text-white rounded-md">
+          </Link>
+          <button onClick={deleteHandler} className="px-4 cursor-pointer py-1 font-semibold bg-red-500 text-white rounded-md">
             <BsTrash2Fill />
           </button>
         </div>

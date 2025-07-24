@@ -22,6 +22,9 @@ const MainRoutes = () => {
             <Route path='/add-place' element={<IsAuthenticated>
                 <CreateListing/> 
             </IsAuthenticated>}/>
+              <Route path='/update/place/:id' element={<IsAuthenticated>
+                <CreateListing/> 
+            </IsAuthenticated>}/>
             <Route path='/listings' element={<IsAuthenticated>
                 <MyListings/>
             </IsAuthenticated>}/>

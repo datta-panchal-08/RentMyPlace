@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     listings: [],
     isListUpdated: false,
-    listingCategory:"All"
+    listingCategory: "All"
 }
 
 const Listingslice = createSlice({
@@ -14,21 +14,22 @@ const Listingslice = createSlice({
             state.listings = action.payload;
             state.isListUpdated = false;
         },
-        setIsListingUpdated: (state) => {
-            state.isListUpdated = !state.isListUpdated;
-        },
-        setListingCategory:(state,action)=>{
+        setIsListingUpdated: (state, action) => {
+            state.isListUpdated = action.payload;
+        }
+        ,
+        setListingCategory: (state, action) => {
             state.listingCategory = action.payload;
         },
-       removeListingCategory:(state)=>{
-          state.listingCategory = null;
-       },
-       clearListings:(state)=>{
-        state.listings = null;
-       } 
+        removeListingCategory: (state) => {
+            state.listingCategory = null;
+        },
+        clearListings: (state) => {
+            state.listings = null;
+        }
 
     }
 });
 
-export const { setListing,clearListings ,setIsListingUpdated ,setListingCategory ,removeListingCategory  } = Listingslice.actions;
+export const { setListing, clearListings, setLoading,setIsListingUpdated, setListingCategory, removeListingCategory } = Listingslice.actions;
 export default Listingslice.reducer;
