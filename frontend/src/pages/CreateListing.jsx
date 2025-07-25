@@ -160,7 +160,7 @@ const CreateListing = () => {
               />
             </label>
             {
-              id ? <>{image1?.url.slice(0, 30)}...</> : <> {
+              id ? <>{image1?.url?.slice(0, 30)}...</> : <> {
                 image1 ? <h3>{image1?.name}</h3> : <h3>Upload First Image</h3>
               }</>
             }
@@ -180,7 +180,7 @@ const CreateListing = () => {
               />
             </label>
             {
-              id ? <>{image2?.url.slice(0, 30)}...</> : <> {
+              id ? <>{image2?.url?.slice(0, 30)}...</> : <> {
                 image2 ? <h3>{image2?.name}</h3> : <h3>Upload Second Image</h3>
               }</>
             }
@@ -197,7 +197,7 @@ const CreateListing = () => {
               />
             </label>
             {
-              id ? <>{image3?.url.slice(0, 30)}...</> : <> {
+              id ? <>{image3?.url?.slice(0, 30)}...</> : <> {
                 image3 ? <h3>{image3?.name}</h3> : <h3>Upload Third Image</h3>
               }</>
             }
