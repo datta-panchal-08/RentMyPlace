@@ -1,10 +1,8 @@
 import axios from 'axios';
-const baseUrl = "https://rentmyplace-backend.onrender.com/api/v1";
-// const baseUrl = "http://localhost:3200/api/v1"
 
 const instance = axios.create({
-    baseURL:baseUrl,
-    withCredentials:true
+  baseURL: "https://rentmyplace-backend.onrender.com/api/v1",
+  withCredentials:true
 });
 
 export const get = (url)=>instance.get(url);
