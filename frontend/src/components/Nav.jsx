@@ -62,7 +62,7 @@ const Nav = () => {
 
   useEffect(() => {
     if (searchTxt.trim() === "") {
-      dispatch(setIsListingUpdated());
+      dispatch(setIsListingUpdated(true));
     }
   }, [searchTxt]);
 
