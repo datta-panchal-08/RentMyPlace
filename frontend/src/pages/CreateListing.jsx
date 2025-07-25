@@ -31,7 +31,7 @@ const CreateListing = () => {
         setDescription(data?.place?.description);
         setPrice(data?.place?.price);
         setCategory(data?.place?.category);
-        setImage1(data?.place?.image1); 
+        setImage1(data?.place?.image1);
         setImage2(data?.place?.image2);
         setImage3(data?.place?.image3);
         setLocation(data?.place?.location);
@@ -60,40 +60,40 @@ const CreateListing = () => {
   }
 
   const handleAddListing = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  try {
-    let formdata = new FormData();
-    formdata.append("title", title);
-    formdata.append("description", description);
-    formdata.append("category", category);
-    formdata.append("image1", image1);
-    formdata.append("image2", image2);
-    formdata.append("image3", image3);
-    formdata.append("location", location);
-    formdata.append("price", price);
+    e.preventDefault();
+    setLoading(true);
+    try {
+      let formdata = new FormData();
+      formdata.append("title", title);
+      formdata.append("description", description);
+      formdata.append("category", category);
+      formdata.append("image1", image1);
+      formdata.append("image2", image2);
+      formdata.append("image3", image3);
+      formdata.append("location", location);
+      formdata.append("price", price);
 
-    let res;
+      let res;
 
-    if (id) {
-      res = await patch(`/listing/update/place/${id}`, formdata);
-    } else {
-      res = await post("/listing/add", formdata);
+      if (id) {
+        res = await patch(`/listing/update/place/${id}`, formdata);
+      } else {
+        res = await post("/listing/add", formdata);
+      }
+
+      if (res?.status === 200 || res?.status === 201) {
+        toast.success(res?.data?.message);
+        dispatch(setIsListingUpdated(true));
+        resetForm();
+      }
+      navigate("/")
+    } catch (error) {
+      const errorMsg = error?.response?.data?.message || "Something went wrong!";
+      toast.error(errorMsg);
+    } finally {
+      setLoading(false);
     }
-
-    if (res?.status === 200 || res?.status === 201) {
-      toast.success(res?.data?.message);
-      dispatch(setIsListingUpdated(true));
-      resetForm();
-    }
-   navigate("/")
-  } catch (error) {
-    const errorMsg = error?.response?.data?.message || "Something went wrong!";
-    toast.error(errorMsg);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="w-full h-full px-2 lg:py-5 py-2 ">
@@ -121,12 +121,20 @@ const CreateListing = () => {
             </div>
             <div className="input-div flex flex-col w-full overflow-hidden lg:w-[50%]">
               <label htmlFor="category">Category</label>
-              <select onChange={(e) => setCategory(e.target.value)} value={category} className='py-[11px] px-2 border-1 overflow-hidden relative rounded-md placeholder:text-zinc-600 border-gray-300 outline-none bg-transparent'  >
-                <option disabled>Select Category</option>
+              <select
+                onChange={(e) => setCategory(e.target.value)}
+                value={category}
+                className='py-[11px] px-2 border-1 overflow-hidden relative rounded-md placeholder:text-zinc-600 border-gray-300 outline-none bg-transparent'
+              >
+                <option value="" disabled>
+                  Select Category
+                </option>
                 {
-                  categories.map((category, i) => {
-                    return <option key={i} className='w-full text-black' value={category}>{category}</option>
-                  })
+                  categories.map((category, i) => (
+                    <option key={i} className='w-full text-black' value={category}>
+                      {category}
+                    </option>
+                  ))
                 }
               </select>
             </div>
