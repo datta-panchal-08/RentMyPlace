@@ -76,7 +76,7 @@ const PlaceDetails = () => {
             <div className="content grid grid-cols-1 gap-2">
                 <div className="grid grid-cols-1">
                     <div className="first-div w-full">
-                        <h3 className='lg:text-2xl md:text-2xl text-[1.1rem] font-semibold text-nowrap flex items-center gap-1'>{place?.title} <span className='text-white font-semibold px-2 py-1.5 bg-red-600 rounded-2xl text-xs md:text-sm'>{place?.category}</span></h3>
+                        <h3 className='lg:text-2xl md:text-2xl text-[15px] font-semibold text-nowrap flex items-center gap-1'>{place?.title} <span className='text-white font-semibold px-2 py-1.5 bg-red-600 rounded-2xl text-xs md:text-sm'>{place?.category}</span></h3>
                         <div className="flex items-center gap-2">
                             <span className='text-sm md:text-xl px-4 flex items-center gap-1 py-1 bg-gray-100 w-fit rounded-full text-blue-600 font-semibold '><FaLocationDot className='text-red-500' />{place?.location}</span>
 
