@@ -33,7 +33,7 @@ const BookingModal = ({ open, setOpen, place }) => {
 
       const res = await post(`/booking/book/${place?._id}`, bookingData);
       if (res.status === 201) {
-        toast.success("Jelll");
+        toast.success(res?.data?.message);
         setTimeout(() => {
           setOpen(false);
           navigate("/bookings");

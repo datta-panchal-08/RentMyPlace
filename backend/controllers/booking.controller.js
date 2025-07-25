@@ -64,7 +64,6 @@ export const deleteBooking = async (req, res) => {
     const { id } = req.params; 
     const userId = req.user?.id;
 
-    // Step 1: Validate
     if (!userId || !id) {
       return res.status(400).json({
         message: "❌ Missing booking ID or user ID!",
@@ -72,7 +71,6 @@ export const deleteBooking = async (req, res) => {
       });
     }
 
-    // Step 2: Find booking
     const booking = await Booking.findById(id);
     if (!booking) {
       return res.status(404).json({
@@ -81,32 +79,27 @@ export const deleteBooking = async (req, res) => {
       });
     }
 
-    // Step 3: Check if the booking belongs to the user
-    if (booking.bookedBy.toString() !== userId.toString()) {
+    if (booking.userId.toString() !== userId.toString()) {
       return res.status(403).json({
         message: "❌ Not authorized to delete this booking!",
         success: false,
       });
     }
 
-    // Step 4: Update the listing to set isBooked = false
     await Listing.findByIdAndUpdate(
       booking.listingId,
       { isBooked: false },
       { new: true }
     );
 
-    // Step 5: Remove booking reference from user
     await User.findByIdAndUpdate(
       userId,
-      { $pull: { booking: id } }, 
+      { $pull: { bookings: id } },
       { new: true }
     );
 
-    // Step 6: Delete the booking document
     await Booking.findByIdAndDelete(id);
 
-    // Step 7: Respond to client
     res.status(200).json({
       message: "✅ Booking cancelled successfully!",
       success: true,

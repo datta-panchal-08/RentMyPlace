@@ -17,7 +17,7 @@ const BookingCard = ({ booking, setUpdate }) => {
       const res = await del(`/booking/book/${booking?._id}`); 
       if (res.status === 200) {
         toast.success(res?.data?.message);
-        setUpdate(true);
+        setUpdate(prev=>!prev);
       }
     } catch (error) {
       const errMsg = error?.response?.data?.message || "Something went wrong!";
