@@ -2,13 +2,7 @@ import jwt from 'jsonwebtoken';
 
 export const isAuthenticated = async (req, res, next) => {
   try {
-    let token;
-
-    if (req.cookies?.token) {
-      token = req.cookies.token;
-    } else if (req.headers.authorization) {
-      token = req.headers.authorization; 
-    }
+    let token = req.cookies.token;
 
     if (!token) {
       return res.status(401).json({
