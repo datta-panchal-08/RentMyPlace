@@ -13,13 +13,14 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-app.use(cors({
-  origin: ["https://rentmyplace-frontend.onrender.com"],
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-}));
 
+const corsOptions = {
+  origin: "https://rent-my-place.vercel.app/",
+  // origin:"http://localhost:5173",
+  credentials: true, 
+};
+
+app.use(cors(corsOptions));      
 app.use(express.json());       
 app.use(cookieParser());          
 
