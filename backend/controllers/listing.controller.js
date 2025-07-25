@@ -8,15 +8,20 @@ export const createListing = async (req, res) => {
   try {
     const { title, description, location, price, category } = req.body;
     const userId = req.user.id;
-    const image1 = await uploadToCloudinary(req.files.image1[0].path);
-    const image2 = await uploadToCloudinary(req.files.image2[0].path);
-    const image3 = await uploadToCloudinary(req.files.image3[0].path);
+    const image1 = await uploadToCloudinary(req.files?.image1[0]?.path);
+    const image2 = await uploadToCloudinary(req.files?.image2[0]?.path);
+    const image3 = await uploadToCloudinary(req.files?.image3[0]?.path);
+
+    if (!req.files?.image1 || !req.files?.image2 || !req.files?.image3) {
+      return res.status(400).json({
+        message: "All three images are required",
+        success: false
+      });
+    }
+
 
     if (
       !title ||
-      !image1 ||
-      !image2 ||
-      !image3 ||
       !description ||
       !location ||
       !category ||
@@ -235,9 +240,9 @@ export const updateListing = async (req, res) => {
 
     const updatedListing = await Listing.findByIdAndUpdate(id, {
       title, location, category, price, description,
-    image1: newImg1 
-  ? { url: newImg1.secure_url, public_id: newImg1.public_id } 
-  : findListing.image1,
+      image1: newImg1
+        ? { url: newImg1.secure_url, public_id: newImg1.public_id }
+        : findListing.image1,
 
       image2: newImg2
         ? { url: newImg2.secure_url, public_id: newImg2.public_id }
