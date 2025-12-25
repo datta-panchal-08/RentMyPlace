@@ -2,55 +2,56 @@ import { Listing } from '../models/listing.model.js';
 import mongoose from 'mongoose';
 import { User } from '../models/user.model.js';
 import { Booking } from '../models/booking.model.js';
-import uploadToCloudinary, { deleteFromCloudinary } from '../config/cloudinary.js';
 
+/* ===================== CREATE LISTING ===================== */
 export const createListing = async (req, res) => {
   try {
-    const { title, description, location, price, category } = req.body;
+    const {
+      title,
+      description,
+      location,
+      price,
+      category,
+      image1,
+      image2,
+      image3
+    } = req.body;
+
     const userId = req.user.id;
-    const image1 = await uploadToCloudinary(req.files?.image1[0]?.path);
-    const image2 = await uploadToCloudinary(req.files?.image2[0]?.path);
-    const image3 = await uploadToCloudinary(req.files?.image3[0]?.path);
-
-    if (!req.files?.image1 || !req.files?.image2 || !req.files?.image3) {
-      return res.status(400).json({
-        message: "All three images are required",
-        success: false
-      });
-    }
-
 
     if (
       !title ||
       !description ||
       !location ||
+      !price ||
       !category ||
-      !price
+      !image1 ||
+      !image2 ||
+      !image3
     ) {
       return res.status(400).json({
-        message: "All fields are required!",
+        message: "All fields including images are required!",
         success: false
       });
     }
 
+    const newListing = await Listing.create({
+      title,
+      description,
+      location,
+      price,
+      category,
+      userId,
+      image1: { url: image1 },
+      image2: { url: image2 },
+      image3: { url: image3 }
+    });
 
-
-    const newListing = await Listing.create(
-      {
-        title, image1: {
-          url: image1.secure_url,
-          public_id: image1.public_id
-        }, image2: {
-          url: image2.secure_url,
-          public_id: image2.public_id
-        }, image3: {
-          url: image3.secure_url,
-          public_id: image3.public_id
-        }, price, description, location, category, userId: userId
-      }
+    await User.findByIdAndUpdate(
+      userId,
+      { $push: { listing: newListing._id } }
     );
-    await newListing.save();
-    await User.findByIdAndUpdate(userId, { $push: { listing: newListing._id } }, { new: true }).exec();
+
     res.status(201).json({
       message: "Listing Created!",
       success: true,
@@ -58,19 +59,19 @@ export const createListing = async (req, res) => {
     });
 
   } catch (error) {
-    console.log("Create Listing Error : ", error);
+    console.error("Create Listing Error:", error);
     res.status(500).json({
       message: "Internal server error!",
       success: false
-    })
+    });
   }
-}
+};
 
-
+/* ===================== GET LISTING BY CATEGORY ===================== */
 export const getListingByCategory = async (req, res) => {
   try {
     const { category } = req.body;
-    let categoryPlace;
+
     if (!category) {
       return res.status(400).json({
         message: "Category is required!",
@@ -78,114 +79,145 @@ export const getListingByCategory = async (req, res) => {
       });
     }
 
+    let categoryPlace;
+
     if (category === "All") {
       categoryPlace = await Listing.find({});
-      return res.status(200).json({
-        message: "All listings fetched",
-        success: true,
-        categoryPlace
-      });
-    }
-    else {
+    } else {
       categoryPlace = await Listing.find({ category });
+    }
 
-      if (categoryPlace.length === 0) {
-        return res.status(404).json({
-          message: "Right now There is no place with this request!",
-          success: false
-        });
-      }
-
-      res.status(200).json({
-        message: "Places found",
-        success: true,
-        categoryPlace
+    if (categoryPlace.length === 0) {
+      return res.status(404).json({
+        message: "No places found!",
+        success: false
       });
     }
+
+    res.status(200).json({
+      message: "Places fetched successfully",
+      success: true,
+      categoryPlace
+    });
 
   } catch (error) {
-    console.log("Category Place Error : ", error);
+    console.error("Category Error:", error);
     res.status(500).json({
       message: "Internal server error",
       success: false
     });
   }
-}
+};
 
+/* ===================== GET PLACE BY ID ===================== */
 export const getPlaceById = async (req, res) => {
   try {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
-        message: "Invalid ID format!",
+        message: "Invalid ID!",
         success: false
       });
     }
 
-    if (!id) {
-      return res.status(400).json({
-        message: "Error, in getting id!",
-        success: false
-      })
-    }
-    const place = await Listing.findById({ _id: id });
+    const place = await Listing.findById(id);
 
     if (!place) {
       return res.status(404).json({
-        success: false,
-        message: "Error, place not found!"
+        message: "Place not found!",
+        success: false
       });
     }
 
     res.status(200).json({
-      message: "Success, place found!",
+      message: "Place found",
       success: true,
       place
-    })
+    });
 
   } catch (error) {
-    console.log("Place Find Error : ", error);
+    console.error("Get Place Error:", error);
     res.status(500).json({
       message: "Internal server error",
       success: false
-    })
+    });
   }
-}
+};
 
-export const deletePlace = async (req, res) => {
+/* ===================== UPDATE LISTING ===================== */
+export const updateListing = async (req, res) => {
   try {
-    const userId = req.user.id;
     const { id } = req.params;
+    const {
+      title,
+      description,
+      location,
+      price,
+      category,
+      image1,
+      image2,
+      image3
+    } = req.body;
 
-    if (!userId || !id) {
-      return res.status(400).json({
-        message: "userId and id required!",
+    const listing = await Listing.findById(id);
+
+    if (!listing) {
+      return res.status(404).json({
+        message: "Listing not found!",
         success: false
       });
     }
+
+    const updatedListing = await Listing.findByIdAndUpdate(
+      id,
+      {
+        title,
+        description,
+        location,
+        price,
+        category,
+        image1: image1 ? { url: image1 } : listing.image1,
+        image2: image2 ? { url: image2 } : listing.image2,
+        image3: image3 ? { url: image3 } : listing.image3
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      message: "Listing Updated!",
+      success: true,
+      updatedListing
+    });
+
+  } catch (error) {
+    console.error("Update Error:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      success: false
+    });
+  }
+};
+
+/* ===================== DELETE LISTING ===================== */
+export const deletePlace = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
 
     await Listing.findByIdAndDelete(id);
 
     await User.findByIdAndUpdate(
       userId,
-      { $pull: { listing: { _id: id } } },
-      { new: true }
+      { $pull: { listing: id } }
     );
 
-    const booking = await Booking.find({ listingId: id });
-
-    const bookingIds = booking.map((b) => b._id);
+    const bookings = await Booking.find({ listingId: id });
+    const bookingIds = bookings.map(b => b._id);
 
     await User.updateMany(
       {},
-      {
-        $pull: {
-          booking: {
-            _id: { $in: bookingIds }
-          }
-        }
-      }
+      { $pull: { booking: { _id: { $in: bookingIds } } } }
     );
 
     await Booking.deleteMany({ listingId: id });
@@ -196,75 +228,10 @@ export const deletePlace = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Error deleting place:", error);
+    console.error("Delete Error:", error);
     res.status(500).json({
-      message: "Something went wrong while deleting place.",
-      success: false,
-      error: error.message
+      message: "Internal server error",
+      success: false
     });
   }
 };
-
-export const updateListing = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { title, description, location, price, category } = req.body;
-
-    const findListing = await Listing.findById(id);
-
-    if (!findListing) {
-      return res.status(404).json({
-        message: "No Listing Found!",
-        success: false
-      })
-    }
-
-    const oldImage1 = findListing.image1.public_id && findListing.image1.public_id;
-    const oldImage2 = findListing.image2.public_id && findListing.image2.public_id;
-    const oldImage3 = findListing.image3.public_id && findListing.image3.public_id;
-
-    const newImg1 = req.files?.image1 ? await uploadToCloudinary(req.files.image1[0].path) : null;
-    const newImg2 = req.files?.image2 ? await uploadToCloudinary(req.files.image2[0].path) : null;
-    const newImg3 = req.files?.image3 ? await uploadToCloudinary(req.files.image3[0].path) : null;
-
-
-    if (newImg1) {
-      await deleteFromCloudinary(oldImage1);
-    }
-    if (newImg2) {
-      await deleteFromCloudinary(oldImage2);
-    }
-    if (newImg3) {
-      await deleteFromCloudinary(oldImage3);
-    }
-
-    const updatedListing = await Listing.findByIdAndUpdate(id, {
-      title, location, category, price, description,
-      image1: newImg1
-        ? { url: newImg1.secure_url, public_id: newImg1.public_id }
-        : findListing.image1,
-
-      image2: newImg2
-        ? { url: newImg2.secure_url, public_id: newImg2.public_id }
-        : findListing.image2,
-
-      image3: newImg3
-        ? { url: newImg3.secure_url, public_id: newImg3.public_id }
-        : findListing.image3,
-
-    }, { new: true })
-
-    res.status(200).json({
-      message: "Listing Updated!",
-      success: true
-    })
-
-  } catch (error) {
-    console.error("Error updating listing:", error);
-    res.status(500).json({
-      message: "Something went wrong while update place.",
-      success: false,
-      error: error.message
-    })
-  }
-}
