@@ -15,7 +15,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
-   origin: "https://rent-my-place-eta.vercel.app/",
+   origin: "https://rent-my-place-mz0vre52t-dattatray-panchals-projects.vercel.app/",
   // origin:"http://localhost:5173",
   credentials: true, 
 };
