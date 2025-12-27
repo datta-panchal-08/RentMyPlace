@@ -174,8 +174,10 @@ const Nav = () => {
                 }
                 <hr />
                 <Link to={"/add-place"} className='flex items-center ml-2 '><MdHomeWork />List Your Home</Link>
+                <hr />
                 <Link to={'/listings'} className='flex items-center ml-2 '><FaClipboardList />My Listings</Link>
-                <Link to={"/bookings"} className='flex items-center ml-2 '><TbBrandBooking />Check Booking</Link>
+                <hr />
+                {/* <Link to={"/bookings"} className='flex items-center ml-2 '><TbBrandBooking />Check Booking</Link> */}
               </ul>
             </div>
           }

@@ -15,13 +15,13 @@ const App = () => {
   const paths = ['/login','/signup'];
    useEffect(() => {
     if (listings?.length === 0 || isListingUpdated) {
-      dispatch(setListingCategory("All"));
+      dispatch(setListingCatpegory("All"));
       dispatch(findPlaceBycategory("All"));
     }
 }, [dispatch, isListingUpdated]);     
   return (
     <div className={`${isDarkMode ? "bg-zinc-950 max-w-screen shadow-white shadow-2xl min-h-screen text-white":"max-w-screen min-h-screen text-black"}`}>
-      <ToastContainer position='top-center' />
+      <ToastContainer position='top-right' />
       {
         paths.includes(pathname) ? "":<Nav/>
       }

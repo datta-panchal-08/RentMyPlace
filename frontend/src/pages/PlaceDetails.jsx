@@ -86,20 +86,20 @@ const PlaceDetails = () => {
                                 }
                             </span></span>
                         </div>
-                        <p className='text-sm font-medium text-zinc-600 '>{place?.description}</p>
+                        <p className='text-sm font-medium mt-1 text-zinc-600 '>{place?.description}</p>
                     </div>
 
-                    <div className="sec-div w-full flex items-center justify-between xl:w-[40%] xl:flex xl:gap-3 xl:justify-start">
+                    {/* <div className="sec-div w-full flex items-center justify-between xl:w-[40%] xl:flex xl:gap-3 xl:justify-start">
                         <div className="flex gap-1 w-full justify-between mt-3">
                             <button onClick={()=>setOpen(true)} className="px-3 cursor-pointer flex items-center gap-1 xl:py-2 py-1 bg-green-600 text-white font-semibold rounded-md ">
                                 Book Place <FaLocationDot className='text-red-500 font-semibold' />
                             </button>
                             <button onClick={chatHandler} className='px-3 flex items-center gap-1 xl:py-2 py-1 bg-orange-500 text-white font-semibold rounded-md  cursor-pointer'>Chat With Owner <FaTelegram className='' /></button>
                         </div>
-                    </div>
-                          {
+                    </div> */}
+                          {/* {
                         open &&<BookingModal place={place} open={open} setOpen={setOpen} />
-                        }
+                        } */}
                 </div>
             </div>
         </div>

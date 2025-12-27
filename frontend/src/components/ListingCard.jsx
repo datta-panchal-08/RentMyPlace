@@ -27,7 +27,7 @@ const ListingCard = ({ listing, isCreator, setUpdate }) => {
   }
 
   return (
-    <div className='w-full h-[350px] rounded-xl overflow-hidden flex flex-col card-shadow'>
+    <div className='w-full h-[350px] hover:scale-105 hover:cursor-pointer rounded-xl overflow-hidden flex flex-col card-shadow shadow-white'>
 
       <Link to={`/place/${listing._id}`} className="aspect-[4/3] w-full relative overflow-hidden">
         <img className='w-full h-full object-cover' src={listing?.image1?.url} alt={listing?.title} />
@@ -45,7 +45,7 @@ const ListingCard = ({ listing, isCreator, setUpdate }) => {
             className={`absolute top-1 left-1 py-1 px-2 rounded-md bg-slate-100 ${!popup ? "z-50" : ""
               }`}
           >
-            <h3 className="text-green-700 text-xs font-semibold">Available</h3>
+            {/* <h3 className="text-green-700 text-xs font-semibold">Available</h3> */}
           </div>
         )}
       </Link>
