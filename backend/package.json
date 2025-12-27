@@ -7,8 +7,13 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+<<<<<<< HEAD
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js"
+=======
+  "start": "node index.js",
+  "dev": "node index.js"
+>>>>>>> ec88c2d41806dd2478163fc811418440d57c20c5
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
